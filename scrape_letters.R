@@ -21,18 +21,26 @@ extract_text <- function(raw_text, letter_number){
     flatten_chr() %>%  
     discard(~`==`(., ""))
 
-  start <- str_which(raw_text, paste0(as.roman(letter_number), ". On"))
+  start <- str_which(raw_text, paste0(as.roman(letter_number), ". (On)|(Some)"))
 
   end <- str_which(raw_text, "Footnotes*")
 
 
   raw_text[start:(end-1)] %>%
-    str_remove_all("\\[\\d{1,}\\]")
+    str_remove_all("\\[\\d{1,}\\]") %>%
+    str_remove_all("\\[edit\\]")
 }
 
 get_letter <- function(base_url, letter_number){
+
+  cat("getting letter: ", letter_number, "\n")
 
   raw_text <- get_raw_text(base_url, letter_number)
 
   extract_text(raw_text, letter_number)
 }
+
+
+#letters_to_lucilius <- map2(base_url, letter_numbers, get_letter)
+
+#saveRDS(letters_to_lucilius, "letters_to_lucilius.rds")
